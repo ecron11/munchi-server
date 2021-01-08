@@ -22,6 +22,16 @@ app.get('/', (req, res) => {
 
 //CRUD functions for inventory items
 
+//Schema for inventory item
+const Schema = mongoose.Schema;
+const inventoryItemSchema = new Schema({
+    userId: {type: String, required: true},
+    name: {type: String, required:true},
+    qty: {type: Number, required: true},
+    qtyUnit: {type: String},
+    
+})
+
 //create item
 app.post('/createInventoryItem', (req, res) => {
     console.log(`Creating inventory new item with name: ${req.body.name}`);
