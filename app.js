@@ -30,46 +30,122 @@ const inventoryItemSchema = new Schema({
     qty: {type: Number, required: true},
     qtyUnit: {type: String},
     
-})
+});
+
+let InventoryItem = mongoose.model("InventoryItem", inventoryItemSchema)
 
 //create item
 app.post('/createInventoryItem', (req, res) => {
     console.log(`Creating inventory new item with name: ${req.body.name}`);
-    res.json({
-        test: "test"
-    });
+    let item = new InventoryItem(
+        {
+            userId: req.body.userId,
+            name: req.body.name,
+            qty: req.body.qty,
+            qtyUnit: req.body.qtyUnit
+        });
+        //should return the item ID to be used later
+        item.save(function (err,data) {
+            if (err) {
+                console.error(err);
+                res.json({
+                    error: err
+                })
+            } else {
+                res.json({
+                    'item' : data
+                });
+            }
+        });
+    
 });
 
 //get an inventory item by ID
 app.get('/getInventoryItemByID/:id?', (req, res) => {
     console.log(`Getting inventory item with ID: ${req.params.id}`);
-    res.json({
-        test: "test"
+
+    InventoryItem.findById(req.params.id, (err, data) => {
+        if (err) {
+            console.error(err);
+            res.json({
+                error: err
+            })
+        } else {
+            res.json({
+                'item' : data
+            });
+        }
     });
 });
 
 //get inventory items by userID
 app.get('/getInventoryItemsByUser/:user?', (req, res)=>{
     console.log(`Getting inventory items for user: ${req.params.user}`);
-    res.json({
-        test: "test"
+
+    InventoryItem
+    .find()
+    .where('userId').equals(req.params.user)
+    .exec((err, data) => {
+        if (err) {
+            console.error(err);
+            res.json({
+                error: err
+            })
+        } else {
+            res.json({
+                'items' : data
+            });
+        }
+        
     })
 })
 
 //update an inventory item by id
-app.put('/updateInventoryItemByID', (req,res) => {
+app.put('/updateInventoryItemByID/:id?', (req,res) => {
     console.log(`Updating inventory item with ID: ${req.body.id}`);
-    res.json({
-        test: "test"
+
+    let update = {};
+    
+    //Checks if prop exists and adds it to update object if it does.
+    if(req.body.name) update.name = req.body.name;
+    if(req.body.qty) update.qty = req.body.qty;
+    if(req.body.qtyUnit) update.qtyUnit = req.body.qtyUnit;
+
+    let options = {new: true};
+
+    InventoryItem.findByIdAndUpdate(req.body.id, update, options, (err, data)=>{
+        if (err) {
+            console.error(err);
+            res.json({
+                error: err
+            })
+        } else {
+            res.json({
+                
+                'item': data
+            })
+        }
     })
+    
 })
 
 //delete and inventory by id
 app.delete('/deleteInventoryItemByID/:id?', (req,res) => {
     console.log(`Deleting inventory item with ID: ${req.params.id}`);
-    res.json({
-        test: "test"
-    })
+
+    InventoryItem.findByIdAndDelete(req.params.id, (err, data) => {
+        if (err) {
+            console.error(err);
+            res.json({
+                error: err
+            })
+        } else {
+            res.json({
+                response: data
+            })
+        } 
+    });
+    
 })
 
 //check state of db
