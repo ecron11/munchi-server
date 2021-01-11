@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
 //Schema for inventory item
 const Schema = mongoose.Schema;
 const inventoryItemSchema = new Schema({
-    userId: {type: String, required: true},
+    inventoryId: {type: String, required: true},
     name: {type: String, required:true},
     qty: {type: Number, required: true},
     qtyUnit: {type: String},
@@ -39,7 +39,7 @@ app.post('/createInventoryItem', (req, res) => {
     console.log(`Creating inventory new item with name: ${req.body.name}`);
     let item = new InventoryItem(
         {
-            userId: req.body.userId,
+            inventoryId: req.body.inventoryId,
             name: req.body.name,
             qty: req.body.qty,
             qtyUnit: req.body.qtyUnit
@@ -78,13 +78,13 @@ app.get('/getInventoryItemByID/:id?', (req, res) => {
     });
 });
 
-//get inventory items by userID
-app.get('/getInventoryItemsByUser/:user?', (req, res)=>{
-    console.log(`Getting inventory items for user: ${req.params.user}`);
+//get inventory items by inventoryId
+app.get('/getInventoryItemsByInventoryId/:inventoryId?', (req, res)=>{
+    console.log(`Getting inventory items for inventoryId: ${req.params.inventoryId}`);
 
     InventoryItem
     .find()
-    .where('userId').equals(req.params.user)
+    .where('inventoryId').equals(req.params.inventoryId)
     .exec((err, data) => {
         if (err) {
             console.error(err);
@@ -107,7 +107,7 @@ app.put('/updateInventoryItemByID/:id?', (req,res) => {
     let update = {};
     
     //Checks if prop exists and adds it to update object if it does.
-    if(req.body.name) update.name = req.body.name;
+    if(req.body.name) update.inventoryId = req.body.inventoryId;
     if(req.body.qty) update.qty = req.body.qty;
     if(req.body.qtyUnit) update.qtyUnit = req.body.qtyUnit;
 
