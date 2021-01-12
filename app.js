@@ -107,7 +107,7 @@ app.put('/updateInventoryItemByID/:id?', (req,res) => {
     let update = {};
     
     //Checks if prop exists and adds it to update object if it does.
-    if(req.body.name) update.inventoryId = req.body.inventoryId;
+    if(req.body.name) update.name = req.body.name;
     if(req.body.qty) update.qty = req.body.qty;
     if(req.body.qtyUnit) update.qtyUnit = req.body.qtyUnit;
 
