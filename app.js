@@ -2,13 +2,35 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const passport = require('passport');
+const session = require('express-session');
+
+
 
 require('dotenv').config();
 const app = express();
 
+//Passport config
+require('./config/passport')(passport);
+
+//middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true}));
 app.use(cors());
+
+//express session middleware
+app.use(session({
+    secret: 'test',
+    resave: false,
+    saveUninitialized: true
+}))
+
+//Passport middleware
+app.use(passport.initialize());
+app.use(passport.session())
+
+//Routes
+app.use('/auth', require('./routes/auth'))
 
 //connect to db
 mongoose.connect(process.env.DB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -33,6 +55,7 @@ const inventoryItemSchema = new Schema({
 });
 
 let InventoryItem = mongoose.model("InventoryItem", inventoryItemSchema)
+
 
 //create item
 app.post('/createInventoryItem', (req, res) => {
