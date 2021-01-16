@@ -6,7 +6,7 @@ const passport = require('passport');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session)
 const cookieSession = require("cookie-session");
-
+const InventoryItem = require("./Models/InventoryItem")
 
 require('dotenv').config();
 const app = express();
@@ -41,8 +41,8 @@ app.use(passport.initialize());
 app.use(passport.session())
 
 //Routes
-app.use('/auth', require('./routes/auth'))
-app.use('/user', require('./routes/user'));
+app.use('/inv', require('./routes/inventory'));
+app.use('/auth', require('./routes/auth'));
 
 const port = process.env.PORT || 3000;
 
@@ -53,24 +53,12 @@ app.get('/', (req, res) => {
 
 //CRUD functions for inventory items
 
-//Schema for inventory item
-const Schema = mongoose.Schema;
-const inventoryItemSchema = new Schema({
-    inventoryId: {type: String, required: true},
-    name: {type: String, required:true},
-    qty: {type: Number, required: true},
-    qtyUnit: {type: String},
-    
-});
-
-let InventoryItem = mongoose.model("InventoryItem", inventoryItemSchema)
-
-
 //create item
 app.post('/createInventoryItem', (req, res) => {
     console.log(`Creating inventory new item with name: ${req.body.name}`);
     let item = new InventoryItem(
         {
+            userId: req.user.id,
             inventoryId: req.body.inventoryId,
             name: req.body.name,
             qty: req.body.qty,
