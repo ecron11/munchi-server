@@ -4,11 +4,13 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const session = require('express-session');
-
+const MongoStore = require('connect-mongo')(session)
 
 
 require('dotenv').config();
 const app = express();
+
+
 
 //Passport config
 require('./config/passport')(passport);
@@ -18,11 +20,16 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true}));
 app.use(cors());
 
+//connect to db
+mongoose.connect(process.env.DB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+
+
 //express session middleware
 app.use(session({
     secret: 'test',
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    store: new MongoStore({ mongooseConnection: mongoose.connection })
 }))
 
 //Passport middleware
@@ -31,9 +38,7 @@ app.use(passport.session())
 
 //Routes
 app.use('/auth', require('./routes/auth'))
-
-//connect to db
-mongoose.connect(process.env.DB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+app.use('/user', require('./routes/user'));
 
 const port = process.env.PORT || 3000;
 
