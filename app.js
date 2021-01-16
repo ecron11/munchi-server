@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session)
+const cookieSession = require("cookie-session");
 
 
 require('dotenv').config();
@@ -18,7 +19,10 @@ require('./config/passport')(passport);
 //middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true}));
-app.use(cors());
+app.use(cors({
+    origin: process.env.FRONTEND_URL
+  }));
+  
 
 //connect to db
 mongoose.connect(process.env.DB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -198,6 +202,8 @@ app.get('/checkdb', function (req, res) {
     res.json({
       state : state})
   });
+
+
 
 app.listen(process.env.PORT, () => {
     console.log(`Server is listening on port ${process.env.PORT}`);
