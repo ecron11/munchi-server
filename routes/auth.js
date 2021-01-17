@@ -13,11 +13,20 @@ router.get('/google/callback', passport.authenticate('google', { failureRedirect
     res.redirect(`${process.env.FRONTEND_URL}`);
 })
 
+// @desc    Check current user
+// @route   /auth/checkCurrentUser
 router.get('/checkCurrentUser', function(req, res) {
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.json({
         user: req.user
     })
 })
+
+// @desc    Logout user
+// @route   /auth/logout
+router.get('/logout', (req, res) =>{
+    req.logout()
+    res.redirect(`${process.env.FRONTEND_URL}/`)
+}) 
 
 module.exports = router;

@@ -58,7 +58,6 @@ app.post('/createInventoryItem', (req, res) => {
     console.log(`Creating inventory new item with name: ${req.body.name}`);
     let item = new InventoryItem(
         {
-            userId: req.user.id,
             inventoryId: req.body.inventoryId,
             name: req.body.name,
             qty: req.body.qty,
