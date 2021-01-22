@@ -123,11 +123,10 @@ app.put('/updateInventoryItemByID/:id?', (req,res) => {
     console.log(`Updating inventory item with ID: ${req.body.id}`);
 
     let update = {};
-    
     //Checks if prop exists and adds it to update object if it does.
-    if(req.body.name) update.name = req.body.name;
-    if(req.body.qty) update.qty = req.body.qty;
-    if(req.body.qtyUnit) update.qtyUnit = req.body.qtyUnit;
+    if(req.body.hasOwnProperty('name')) update.name = req.body.name;
+    if(req.body.hasOwnProperty('qty')) update.qty = req.body.qty;
+    if(req.body.hasOwnProperty('qtyUnit')) update.qtyUnit = req.body.qtyUnit;
 
     let options = {new: true};
 
